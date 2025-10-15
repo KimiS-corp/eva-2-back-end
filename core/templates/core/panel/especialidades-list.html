@@ -1,0 +1,37 @@
+﻿{% extends 'core/panel/base.html' %}
+
+{% block title %}Especialidades - Salud Vital{% endblock %}
+
+{% block content %}
+<h1>Lista de Especialidades</h1>
+
+<form method="get" class="mb-3">
+    <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar especialidades..." class="form-control">
+    <button type="submit" class="btn btn-primary mt-2">Buscar</button>
+</form>
+
+{% if especialidades %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Total Médicos</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for especialidad in especialidades %}
+        <tr>
+            <td>{{ especialidad.nombre }}</td>
+            <td>{{ especialidad.descripcion }}</td>
+            <td>{{ especialidad.total_medicos }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No se encontraron especialidades.</p>
+{% endif %}
+
+<a href="{% url 'dashboard' %}" class="btn btn-secondary">Volver al Dashboard</a>
+{% endblock %}

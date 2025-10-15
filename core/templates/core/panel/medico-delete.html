@@ -1,0 +1,40 @@
+﻿{% extends 'core/panel/base.html' %}
+
+{% block title %}Eliminar Médico - Salud Vital{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Eliminar Médico</h1>
+    <a href="{% url 'medicos-list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver a la lista
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Confirmar Eliminación</h5>
+                <p class="card-text">
+                    ¿Estás seguro de que deseas eliminar al médico 
+                    <strong>Dr. {{ medico.nombre }} {{ medico.apellido }}</strong> ({{ medico.rut }})?
+                </p>
+                <p class="text-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Esta acción no se puede deshacer.
+                </p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'medicos-list' %}" class="btn btn-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Confirmar Eliminación
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

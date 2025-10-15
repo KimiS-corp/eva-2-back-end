@@ -1,0 +1,81 @@
+﻿{% extends 'core/panel/base.html' %}
+
+{% block title %}Consultas - Salud Vital{% endblock %}
+
+{% block content %}
+<h1>Lista de Consultas Médicas</h1>
+
+<form method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-3">
+            <select name="paciente" class="form-control">
+                <option value="">Todos los pacientes</option>
+                {% for paciente in pacientes %}
+                <option value="{{ paciente.id }}" {% if filtros.paciente_id == paciente.id|stringformat:'i' %}selected{% endif %}>
+                    {{ paciente.nombre }} {{ paciente.apellido }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="medico" class="form-control">
+                <option value="">Todos los médicos</option>
+                {% for medico in medicos %}
+                <option value="{{ medico.id }}" {% if filtros.medico_id == medico.id|stringformat:'i' %}selected{% endif %}>
+                    Dr. {{ medico.nombre }} {{ medico.apellido }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="estado" class="form-control">
+                <option value="">Todos los estados</option>
+                <option value="PROG" {% if filtros.estado == 'PROG' %}selected{% endif %}>Programada</option>
+                <option value="CURS" {% if filtros.estado == 'CURS' %}selected{% endif %}>En Curso</option>
+                <option value="COMP" {% if filtros.estado == 'COMP' %}selected{% endif %}>Completada</option>
+                <option value="CANC" {% if filtros.estado == 'CANC' %}selected{% endif %}>Cancelada</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+    </div>
+</form>
+
+{% if consultas %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Paciente</th>
+            <th>Médico</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Motivo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for consulta in consultas %}
+        <tr>
+            <td>{{ consulta.paciente.nombre }} {{ consulta.paciente.apellido }}</td>
+            <td>Dr. {{ consulta.medico.nombre }} {{ consulta.medico.apellido }}</td>
+            <td>{{ consulta.fecha_consulta|date:'d/m/Y H:i' }}</td>
+            <td>
+                <span class="badge 
+                    {% if consulta.estado == 'COMP' %}bg-success
+                    {% elif consulta.estado == 'CURS' %}bg-warning
+                    {% elif consulta.estado == 'PROG' %}bg-info
+                    {% else %}bg-danger{% endif %}">
+                    {{ consulta.get_estado_display }}
+                </span>
+            </td>
+            <td>{{ consulta.motivo|truncatewords:10 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No se encontraron consultas.</p>
+{% endif %}
+
+<a href="{% url 'dashboard' %}" class="btn btn-secondary">Volver al Dashboard</a>
+{% endblock %}

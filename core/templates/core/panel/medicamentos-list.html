@@ -1,0 +1,55 @@
+﻿{% extends 'core/panel/base.html' %}
+
+{% block title %}Medicamentos - Salud Vital{% endblock %}
+
+{% block content %}
+<h1>Inventario de Medicamentos</h1>
+
+<form method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar medicamentos..." class="form-control">
+        </div>
+        <div class="col-md-4">
+            <div class="form-check mt-2">
+                <input type="checkbox" name="stock_bajo" value="true" {% if stock_bajo %}checked{% endif %} class="form-check-input">
+                <label class="form-check-label">Stock bajo (< 10 unidades)</label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+        </div>
+    </div>
+</form>
+
+{% if medicamentos %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Laboratorio</th>
+            <th>Stock</th>
+            <th>Precio Unitario</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for medicamento in medicamentos %}
+        <tr>
+            <td>{{ medicamento.nombre }}</td>
+            <td>{{ medicamento.laboratorio }}</td>
+            <td>
+                <span class="{% if medicamento.stock < 10 %}text-danger fw-bold{% endif %}">
+                    {{ medicamento.stock }}
+                </span>
+            </td>
+            <td>{{ medicamento.precio_unitario }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No se encontraron medicamentos.</p>
+{% endif %}
+
+<a href="{% url 'dashboard' %}" class="btn btn-secondary">Volver al Dashboard</a>
+{% endblock %}

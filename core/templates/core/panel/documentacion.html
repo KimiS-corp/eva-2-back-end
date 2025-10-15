@@ -1,0 +1,144 @@
+﻿{% extends 'core/panel/base.html' %}
+
+{% block title %}Documentación API - Salud Vital{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Documentación de la API</h1>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Endpoints de la API REST</h5>
+            </div>
+            <div class="card-body">
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Endpoint</th>
+                                <th>Descripción</th>
+                                <th>Métodos HTTP</th>
+                                <th>Filtros Disponibles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>/api/pacientes/</code></td>
+                                <td>Gestión completa de pacientes</td>
+                                <td>GET, POST, PUT, PATCH, DELETE</td>
+                                <td>tipo_sangre, activo, búsqueda</td>
+                            </tr>
+                            <tr>
+                                <td><code>/api/medicos/</code></td>
+                                <td>Gestión completa de médicos</td>
+                                <td>GET, POST, PUT, PATCH, DELETE</td>
+                                <td>especialidad, activo, búsqueda</td>
+                            </tr>
+                            <tr>
+                                <td><code>/api/especialidades/</code></td>
+                                <td>Gestión de especialidades médicas</td>
+                                <td>GET, POST, PUT, PATCH, DELETE</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><code>/api/consultas/</code></td>
+                                <td>Registro de consultas médicas</td>
+                                <td>GET, POST, PUT, PATCH, DELETE</td>
+                                <td>paciente, medico, estado</td>
+                            </tr>
+                            <tr>
+                                <td><code>/api/medicamentos/</code></td>
+                                <td>Inventario de medicamentos</td>
+                                <td>GET, POST, PUT, PATCH, DELETE</td>
+                                <td>búsqueda por nombre/laboratorio</td>
+                            </tr>
+                            <tr>
+                                <td><code>/api/tratamientos/</code></td>
+                                <td>Gestión de tratamientos médicos</td>
+                                <td>GET, POST, PUT, PATCH, DELETE</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><code>/api/recetas/</code></td>
+                                <td>Recetas médicas (MEJORA 2)</td>
+                                <td>GET, POST, PUT, PATCH, DELETE</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><code>/api/historial-medico/</code></td>
+                                <td>Historial médico (MEJORA 2)</td>
+                                <td>GET, POST, PUT, PATCH, DELETE</td>
+                                <td>paciente, medico_responsable, tipo_evento, gravedad</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h5 class="mt-4">Ejemplos de Uso:</h5>
+                
+                <div class="card mb-3">
+                    <div class="card-header bg-info text-white">
+                        <strong>Obtener todos los pacientes</strong>
+                    </div>
+                    <div class="card-body">
+                        <code>GET /api/pacientes/</code>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header bg-success text-white">
+                        <strong>Crear un nuevo paciente</strong>
+                    </div>
+                    <div class="card-body">
+                        <pre><code>POST /api/pacientes/
+{
+    "rut": "12.345.678-9",
+    "nombre": "Juan",
+    "apellido": "Pérez", 
+    "fecha_nacimiento": "1990-01-01",
+    "tipo_sangre": "A+",
+    "correo": "juan@email.com",
+    "telefono": "+56912345678",
+    "direccion": "Calle 123, Santiago",
+    "activo": true
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header bg-warning text-dark">
+                        <strong>Filtrar pacientes por tipo de sangre</strong>
+                    </div>
+                    <div class="card-body">
+                        <code>GET /api/pacientes/?tipo_sangre=A+</code>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header bg-secondary text-white">
+                        <strong>Buscar médicos por especialidad</strong>
+                    </div>
+                    <div class="card-body">
+                        <code>GET /api/medicos/?especialidad=1</code>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mt-4">
+                    <h6><i class="fas fa-info-circle"></i> Notas importantes:</h6>
+                    <ul class="mb-0">
+                        <li>Todos los endpoints requieren autenticación (Token o Session)</li>
+                        <li>Las respuestas están en formato JSON</li>
+                        <li>Paginación automática: 10 elementos por página</li>
+                        <li>Filtros disponibles según cada endpoint</li>
+                        <li>Validaciones automáticas de datos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+﻿{% extends 'core/panel/base.html' %}
+
+{% block title %}Pacientes - Salud Vital{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Gestión de Pacientes</h1>
+    <a href="{% url 'paciente-create' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Nuevo Paciente
+    </a>
+</div>
+
+<!-- Filtros y Búsqueda -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="q" class="form-control" placeholder="Buscar por nombre, apellido, RUT o email..." 
+                       value="{{ query|default:'' }}">
+            </div>
+            <div class="col-md-3">
+                <select name="activo" class="form-control">
+                    <option value="">Todos los estados</option>
+                    <option value="true" {% if activo_filter == 'true' %}selected{% endif %}>Activos</option>
+                    <option value="false" {% if activo_filter == 'false' %}selected{% endif %}>Inactivos</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista de Pacientes -->
+<div class="card">
+    <div class="card-body">
+        {% if pacientes %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>RUT</th>
+                        <th>Nombre Completo</th>
+                        <th>Teléfono</th>
+                        <th>Tipo Sangre</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paciente in pacientes %}
+                    <tr>
+                        <td>{{ paciente.rut }}</td>
+                        <td>{{ paciente.nombre }} {{ paciente.apellido }}</td>
+                        <td>{{ paciente.telefono }}</td>
+                        <td>{{ paciente.get_tipo_sangre_display }}</td>
+                        <td>
+                            <span class="badge {% if paciente.activo %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ paciente.activo|yesno:"Activo,Inactivo" }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'paciente-edit' paciente.pk %}" class="btn btn-warning btn-action" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'paciente-delete' paciente.pk %}" class="btn btn-danger btn-action" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        {% if pacientes.has_other_pages %}
+        <nav aria-label="Paginación de pacientes">
+            <ul class="pagination justify-content-center">
+                {% if pacientes.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ pacientes.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if activo_filter %}&activo={{ activo_filter }}{% endif %}">Anterior</a>
+                </li>
+                {% endif %}
+
+                {% for num in pacientes.paginator.page_range %}
+                {% if pacientes.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if activo_filter %}&activo={{ activo_filter }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if pacientes.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ pacientes.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if activo_filter %}&activo={{ activo_filter }}{% endif %}">Siguiente</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No se encontraron pacientes</h5>
+            <p class="text-muted">No hay pacientes que coincidan con tu búsqueda.</p>
+            <a href="{% url 'paciente-create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Crear primer paciente
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

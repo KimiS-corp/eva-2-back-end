@@ -1,0 +1,182 @@
+﻿{% extends 'core/panel/base.html' %}
+
+{% block title %}Dashboard - Salud Vital{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard Principal</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <span class="btn btn-sm btn-outline-secondary">{{ user.username }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Estadísticas -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2 stat-card">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Pacientes Registrados
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_pacientes }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user-injured fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2 stat-card">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Médicos Activos
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_medicos }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user-md fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2 stat-card">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Consultas Hoy
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.consultas_hoy }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2 stat-card">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Stock Bajo
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.medicamentos_stock_bajo }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-pills fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Acciones Rápidas</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 mb-3">
+                        <a href="{% url 'paciente-create' %}" class="btn btn-primary btn-block w-100">
+                            <i class="fas fa-plus"></i> Nuevo Paciente
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <a href="{% url 'pacientes-list' %}" class="btn btn-outline-primary btn-block w-100">
+                            <i class="fas fa-list"></i> Ver Pacientes
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <a href="{% url 'medicos-list' %}" class="btn btn-success btn-block w-100">
+                            <i class="fas fa-user-md"></i> Ver Médicos
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <a href="{% url 'consultas-list' %}" class="btn btn-info btn-block w-100">
+                            <i class="fas fa-calendar-plus"></i> Ver Consultas
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <a href="{% url 'medicamentos-list' %}" class="btn btn-warning btn-block w-100">
+                            <i class="fas fa-capsules"></i> Ver Medicamentos
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <a href="/admin/" class="btn btn-secondary btn-block w-100">
+                            <i class="fas fa-cog"></i> Admin Django
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Últimas Consultas -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Últimas Consultas</h6>
+                <a href="{% url 'consultas-list' %}" class="btn btn-sm btn-primary">Ver Todas</a>
+            </div>
+            <div class="card-body">
+                {% if ultimas_consultas %}
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Médico</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for consulta in ultimas_consultas %}
+                            <tr>
+                                <td>{{ consulta.paciente.nombre }} {{ consulta.paciente.apellido }}</td>
+                                <td>Dr. {{ consulta.medico.nombre }} {{ consulta.medico.apellido }}</td>
+                                <td>{{ consulta.fecha_consulta|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if consulta.estado == 'COMP' %}bg-success
+                                        {% elif consulta.estado == 'CURS' %}bg-warning
+                                        {% elif consulta.estado == 'PROG' %}bg-info
+                                        {% else %}bg-danger{% endif %}">
+                                        {{ consulta.get_estado_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No hay consultas recientes.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
