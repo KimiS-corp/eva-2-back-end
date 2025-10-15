@@ -1,0 +1,19 @@
+﻿{% extends 'core/panel/base.html' %}
+
+{% block title %}Página No Encontrada - Salud Vital{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <i class="fas fa-exclamation-triangle fa-5x text-warning mb-4"></i>
+    <h1 class="display-4">404 - Página No Encontrada</h1>
+    <p class="lead">La página que estás buscando no existe.</p>
+    <div class="mt-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-home"></i> Volver al Dashboard
+        </a>
+        <a href="javascript:history.back()" class="btn btn-secondary btn-lg">
+            <i class="fas fa-arrow-left"></i> Volver Atrás
+        </a>
+    </div>
+</div>
+{% endblock %}
