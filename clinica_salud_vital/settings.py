@@ -10,6 +10,7 @@ Configuración principal del proyecto Django para el sistema de gestión médica
 Define configuraciones de base de datos, aplicaciones, middleware y API REST.
 """
 
+import os  # ¡AGREGA ESTA LÍNEA!
 from pathlib import Path
 
 # =============================================================================
@@ -22,7 +23,6 @@ OBJETIVO: Definir la estructura de directorios del sistema
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # =============================================================================
 # CONFIGURACIÓN DE SEGURIDAD
@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'django_filters',
-    'drf_yasg',  # ← AGREGAR ESTA LÍNEA
+    'drf_yasg', 
     
     # Local apps
     'core',
@@ -125,6 +125,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
 # =============================================================================
 # CONFIGURACIÓN DE VALIDACIÓN DE CONTRASEÑAS
 # =============================================================================
@@ -174,7 +175,10 @@ BLOQUE: Configuración para archivos CSS, JavaScript e imágenes
 OBJETIVO: Servir archivos estáticos correctamente
 """
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'core/static'),  # ¡CORREGIDO!
+]
 
 
 # =============================================================================

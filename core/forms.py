@@ -1,4 +1,3 @@
-# core/forms.py
 """
 MÓDULO: forms.py
 SISTEMA: Clinica Salud Vital
@@ -15,7 +14,10 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 import re
-from .models import Paciente, Medico, Especialidad, ConsultaMedica, Medicamento
+from .models import (
+    Paciente, Medico, Especialidad, ConsultaMedica, Medicamento,
+    Tratamiento, RecetaMedica 
+)
 
 
 # =============================================================================
@@ -35,8 +37,11 @@ class PacienteForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'rut': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': '12.345.678-9'
+                'class': 'form-control rut-input',
+                'placeholder': '12.345.678-9',
+                'pattern': '^\\d{1,2}\\.\\d{3}\\.\\d{3}-[\\dKk]$',
+                'title': 'Formato: 12.345.678-9',
+                'autocomplete': 'off' 
             }),
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -58,8 +63,10 @@ class PacienteForm(forms.ModelForm):
                 'placeholder': 'ejemplo@correo.com'
             }),
             'telefono': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': '+56 9 1234 5678'
+                'class': 'form-control telefono-input', 
+                'placeholder': '+56 9 1234 5678',
+                'title': 'Formato: +56 9 1234 5678',
+                'autocomplete': 'off'
             }),
             'direccion': forms.Textarea(attrs={
                 'class': 'form-control',
@@ -91,10 +98,10 @@ class PacienteForm(forms.ModelForm):
             # Validar que sea número chileno (9 dígitos después de 56 o solo 9 dígitos)
             if len(telefono_limpio) == 9 and telefono_limpio.startswith('9'):
                 # Formato 912345678
-                return f"+56{telefono_limpio}"
+                return f"+56 {telefono_limpio[0]} {telefono_limpio[1:5]} {telefono_limpio[5:]}"
             elif len(telefono_limpio) == 11 and telefono_limpio.startswith('569'):
                 # Formato 56912345678
-                return f"+{telefono_limpio}"
+                return f"+56 {telefono_limpio[2]} {telefono_limpio[3:7]} {telefono_limpio[7:]}"
             elif len(telefono_limpio) == 12 and telefono_limpio.startswith('569'):
                 # Ya tiene +56912345678
                 return telefono
@@ -134,8 +141,11 @@ class MedicoForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'rut': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': '12.345.678-9'
+                'class': 'form-control rut-input',
+                'placeholder': '12.345.678-9',
+                'pattern': '^\\d{1,2}\\.\\d{3}\\.\\d{3}-[\\dKk]$',
+                'title': 'Formato: 12.345.678-9',
+                'autocomplete': 'off'
             }),
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -150,8 +160,11 @@ class MedicoForm(forms.ModelForm):
                 'placeholder': 'medico@clinica.com'
             }),
             'telefono': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': '+56 9 1234 5678'
+                'class': 'form-control telefono-input',
+                'placeholder': '+56 9 1234 5678',
+                'pattern': '^\\+56\\s9\\s\\d{4}\\s\\d{4}$',
+                'title': 'Formato: +56 9 1234 5678',
+                'autocomplete': 'off'
             }),
             'especialidad': forms.Select(attrs={
                 'class': 'form-control'
@@ -177,9 +190,9 @@ class MedicoForm(forms.ModelForm):
             telefono_limpio = telefono.replace(' ', '').replace('-', '').replace('+', '')
             
             if len(telefono_limpio) == 9 and telefono_limpio.startswith('9'):
-                return f"+56{telefono_limpio}"
+                return f"+56 {telefono_limpio[0]} {telefono_limpio[1:5]} {telefono_limpio[5:]}"
             elif len(telefono_limpio) == 11 and telefono_limpio.startswith('569'):
-                return f"+{telefono_limpio}"
+                return f"+56 {telefono_limpio[2]} {telefono_limpio[3:7]} {telefono_limpio[7:]}"
             elif len(telefono_limpio) == 12 and telefono_limpio.startswith('569'):
                 return telefono
             else:
@@ -264,10 +277,10 @@ class ConsultaMedicaForm(forms.ModelForm):
         }
     
     def clean_fecha_consulta(self):
-        """Validar que la fecha de consulta no sea pasada"""
+        """Validar que la fecha de consulta no sea futura"""
         fecha_consulta = self.cleaned_data.get('fecha_consulta')
-        if fecha_consulta and fecha_consulta < timezone.now():
-            raise ValidationError("La fecha de consulta no puede ser en el pasado")
+        if fecha_consulta and fecha_consulta > timezone.now():
+            raise ValidationError("La fecha de consulta no puede ser en el futuro")
         return fecha_consulta
 
 
@@ -319,6 +332,69 @@ class MedicamentoForm(forms.ModelForm):
         if precio <= 0:
             raise ValidationError("El precio debe ser mayor a 0")
         return precio
+
+
+# =============================================================================
+# FORMULARIOS PARA TRATAMIENTOS Y RECETAS
+# =============================================================================
+
+class TratamientoForm(forms.ModelForm):
+    """
+    FORMULARIO: TratamientoForm
+    MODELO: Tratamiento
+    PROPÓSITO: Crear y editar tratamientos médicos
+    """
+    
+    class Meta:
+        model = Tratamiento
+        fields = ['consulta', 'descripcion', 'duracion_dias', 'observaciones']
+        widgets = {
+            'consulta': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Descripción detallada del tratamiento...'
+            }),
+            'duracion_dias': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': 1
+            }),
+            'observaciones': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Observaciones adicionales...'
+            })
+        }
+
+class RecetaMedicaForm(forms.ModelForm):
+    """
+    FORMULARIO: RecetaMedicaForm
+    MODELO: RecetaMedica
+    PROPÓSITO: Crear recetas médicas con medicamentos
+    """
+    
+    class Meta:
+        model = RecetaMedica
+        fields = ['medicamento', 'dosis', 'frecuencia', 'duracion']
+        widgets = {
+            'medicamento': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'dosis': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: 500mg, 1 tableta, etc.'
+            }),
+            'frecuencia': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Cada 8 horas, 1 vez al día, etc.'
+            }),
+            'duracion': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: 7 días, 2 semanas, etc.'
+            })
+        }
 
 
 # =============================================================================

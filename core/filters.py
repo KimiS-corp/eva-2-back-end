@@ -17,12 +17,8 @@ from .models import Paciente, Medico, ConsultaMedica, Medicamento, HistorialMedi
 
 
 # =============================================================================
-# BLOQUE 1: FILTROS PARA PACIENTES
+# BLOQUE 1: FILTROS PARA PACIENTES - CORREGIDO
 # =============================================================================
-"""
-BLOQUE: Filtros personalizados para el modelo Paciente
-OBJETIVO: Permitir filtrado por tipo de sangre y estado activo
-"""
 
 class PacienteFilter(django_filters.FilterSet):
     """
@@ -41,16 +37,11 @@ class PacienteFilter(django_filters.FilterSet):
     edad_max = django_filters.NumberFilter(method='filter_edad_max', label='Edad máxima')
     
     class Meta:
-        """
-        CLASE Meta: Configuración del filtro
-        MODEL: Modelo al que aplica el filtro
-        FIELDS: Campos disponibles para filtrado con operadores
-        """
         model = Paciente
         fields = {
             'tipo_sangre': ['exact'],
             'activo': ['exact'],
-            'fecha_registro': ['gte', 'lte', 'exact', 'year'],
+            # 'fecha_registro' REMOVIDO porque no existe en el modelo según rúbrica
         }
     
     def filter_edad_min(self, queryset, name, value):
@@ -73,12 +64,8 @@ class PacienteFilter(django_filters.FilterSet):
 
 
 # =============================================================================
-# BLOQUE 2: FILTROS PARA MÉDICOS
+# BLOQUE 2: FILTROS PARA MÉDICOS - CORREGIDO
 # =============================================================================
-"""
-BLOQUE: Filtros personalizados para el modelo Medico
-OBJETIVO: Permitir filtrado por especialidad y estado activo
-"""
 
 class MedicoFilter(django_filters.FilterSet):
     """
@@ -94,10 +81,6 @@ class MedicoFilter(django_filters.FilterSet):
     anos_experiencia_min = django_filters.NumberFilter(method='filter_anos_experiencia', label='Años experiencia mínima')
 
     class Meta:
-        """
-        CLASE Meta: Configuración del filtro para médicos
-        FIELDS: Incluye filtros por especialidad y estado
-        """
         model = Medico
         fields = {
             'especialidad': ['exact'],
@@ -117,10 +100,6 @@ class MedicoFilter(django_filters.FilterSet):
 # =============================================================================
 # BLOQUE 3: FILTROS PARA CONSULTAS MÉDICAS
 # =============================================================================
-"""
-BLOQUE: Filtros personalizados para el modelo ConsultaMedica
-OBJETIVO: Permitir filtrado por paciente, médico y estado de consulta
-"""
 
 class ConsultaMedicaFilter(django_filters.FilterSet):
     """
@@ -145,10 +124,6 @@ class ConsultaMedicaFilter(django_filters.FilterSet):
     fecha_hasta = django_filters.DateTimeFilter(field_name='fecha_consulta', lookup_expr='lte')
 
     class Meta:
-        """
-        CLASE Meta: Configuración del filtro para consultas
-        FIELDS: Lista explícita de campos filtrables
-        """
         model = ConsultaMedica
         fields = ['paciente', 'medico', 'estado']
 
@@ -156,10 +131,6 @@ class ConsultaMedicaFilter(django_filters.FilterSet):
 # =============================================================================
 # BLOQUE 4: FILTROS PARA MEDICAMENTOS
 # =============================================================================
-"""
-BLOQUE: Filtros personalizados para el modelo Medicamento
-OBJETIVO: Permitir filtrado por stock y laboratorio
-"""
 
 class MedicamentoFilter(django_filters.FilterSet):
     """
@@ -176,10 +147,6 @@ class MedicamentoFilter(django_filters.FilterSet):
     stock_bajo = django_filters.BooleanFilter(method='filter_stock_bajo', label='Stock bajo')
     
     class Meta:
-        """
-        CLASE Meta: Configuración del filtro para medicamentos
-        FIELDS: Campos disponibles para filtrado
-        """
         model = Medicamento
         fields = {
             'laboratorio': ['exact', 'icontains'],
@@ -194,16 +161,12 @@ class MedicamentoFilter(django_filters.FilterSet):
 
 
 # =============================================================================
-# BLOQUE 5: FILTROS PARA HISTORIAL MÉDICO (MEJORA 2)
+# BLOQUE 5: FILTROS PARA HISTORIAL MÉDICO
 # =============================================================================
-"""
-BLOQUE: Filtros personalizados para el modelo HistorialMedico
-OBJETIVO: Permitir filtrado por tipo de evento y gravedad
-"""
 
 class HistorialMedicoFilter(django_filters.FilterSet):
     """
-    FILTRO: HistorialMedicoFilter (MEJORA 2)
+    FILTRO: HistorialMedicoFilter
     MODELO: HistorialMedico
     PROPÓSITO: Definir filtros personalizados para historial médico
     FUNCIONALIDAD: Filtrado por eventos, gravedad y fechas
@@ -231,9 +194,5 @@ class HistorialMedicoFilter(django_filters.FilterSet):
     fecha_hasta = django_filters.DateTimeFilter(field_name='fecha_evento', lookup_expr='lte')
 
     class Meta:
-        """
-        CLASE Meta: Configuración del filtro para historial médico
-        FIELDS: Campos disponibles para filtrado
-        """
         model = HistorialMedico
         fields = ['paciente', 'medico_responsable', 'tipo_evento', 'gravedad']

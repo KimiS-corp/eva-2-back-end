@@ -63,6 +63,12 @@
                                 <i class="fas fa-user-injured"></i> Pacientes
                             </a>
                         </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'tratamientos-list' %}">
+                                    <i class="fas fa-file-medical"></i>
+                                    <span>Tratamientos</span>
+                                </a>
+                            </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'medicos-list' %}">
                                 <i class="fas fa-user-md"></i> Médicos
@@ -83,6 +89,12 @@
                                 <i class="fas fa-pills"></i> Medicamentos
                             </a>
                         </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'recetas-list' %}">
+                                    <i class="fas fa-prescription"></i>
+                                    <span>Recetas Médicas</span>
+                                </a>
+                        </li>
                         <li class="nav-item mt-4">
                             <a class="nav-link bg-warning text-dark" href="/admin/">
                                 <i class="fas fa-cog"></i> Admin Django
@@ -97,7 +109,6 @@
                             <a class="nav-link bg-success" href="/swagger/">
                                 <i class="fas fa-book"></i> Documentación
                             </a>
-                        </li>
                     </ul>
                 </div>
             </nav>
@@ -127,5 +138,27 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">Christofer Salazar | AP-172-N4 | 2025</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS - AGREGAR ESTAS LÍNEAS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery (necesario para algunas funcionalidades) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Cargar archivos estáticos de Django -->
+    {% load static %}
+    
+    <!-- JavaScript personalizado para formato automático -->
+    <script src="{% static 'core/js/formato.js' %}"></script>
+    
+    <!-- Scripts adicionales por bloque -->
+    {% block extra_js %}
+    {% endblock %}
 </body>
 </html>

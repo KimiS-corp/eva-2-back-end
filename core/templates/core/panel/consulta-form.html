@@ -1,0 +1,88 @@
+{% extends 'core/panel/base.html' %}
+
+{% block title %}Nueva Consulta - Salud Vital{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Nueva Consulta Médica</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'consultas-list' %}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a Consultas
+        </a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Datos de la Consulta</h6>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Por favor corrige los siguientes errores:</strong>
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="{{ form.paciente.id_for_label }}" class="form-label">Paciente *</label>
+                    {{ form.paciente }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.medico.id_for_label }}" class="form-label">Médico *</label>
+                    {{ form.medico }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="{{ form.fecha_consulta.id_for_label }}" class="form-label">Fecha y Hora *</label>
+                    {{ form.fecha_consulta }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.estado.id_for_label }}" class="form-label">Estado *</label>
+                    {{ form.estado }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="{{ form.motivo.id_for_label }}" class="form-label">Motivo de la Consulta *</label>
+                    {{ form.motivo }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="{{ form.diagnostico.id_for_label }}" class="form-label">Diagnóstico</label>
+                    {{ form.diagnostico }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Crear Consulta
+                    </button>
+                    <a href="{% url 'consultas-list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

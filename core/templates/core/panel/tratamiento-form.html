@@ -1,0 +1,119 @@
+{% extends 'core/panel/base.html' %}
+
+{% block title %}Nuevo Tratamiento - Salud Vital{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Nuevo Tratamiento Médico</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'tratamientos-list' %}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a Tratamientos
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Datos del Tratamiento</h6>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Por favor corrige los siguientes errores:</strong>
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="{{ form.consulta.id_for_label }}" class="form-label">Consulta Médica *</label>
+                            {{ form.consulta }}
+                            {% if form.consulta.help_text %}
+                            <div class="form-text">{{ form.consulta.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="{{ form.descripcion.id_for_label }}" class="form-label">Descripción del Tratamiento *</label>
+                            {{ form.descripcion }}
+                            {% if form.descripcion.help_text %}
+                            <div class="form-text">{{ form.descripcion.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.duracion_dias.id_for_label }}" class="form-label">Duración (días) *</label>
+                            {{ form.duracion_dias }}
+                            {% if form.duracion_dias.help_text %}
+                            <div class="form-text">{{ form.duracion_dias.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="{{ form.observaciones.id_for_label }}" class="form-label">Observaciones</label>
+                            {{ form.observaciones }}
+                            {% if form.observaciones.help_text %}
+                            <div class="form-text">{{ form.observaciones.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Crear Tratamiento
+                            </button>
+                            <a href="{% url 'tratamientos-list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">Información</h6>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    <i class="fas fa-info-circle text-info"></i> 
+                    <strong>Flujo del sistema:</strong>
+                </p>
+                <ol class="small">
+                    <li>Crear Consulta Médica</li>
+                    <li>Crear Tratamiento (esta página)</li>
+                    <li>Agregar Recetas con Medicamentos</li>
+                </ol>
+                <p class="card-text">
+                    <i class="fas fa-lightbulb text-warning"></i> 
+                    Después de crear el tratamiento, podrás agregar los medicamentos recetados.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

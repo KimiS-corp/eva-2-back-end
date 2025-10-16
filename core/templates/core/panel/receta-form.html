@@ -1,0 +1,119 @@
+{% extends 'core/panel/base.html' %}
+
+{% block title %}Nueva Receta - Salud Vital{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Nueva Receta Médica</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'tratamientos-list' %}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a Tratamientos
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Datos de la Receta</h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>Tratamiento:</strong> {{ tratamiento.consulta.paciente.nombre }} {{ tratamiento.consulta.paciente.apellido }} - 
+                    {{ tratamiento.descripcion|truncatewords:10 }}
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Por favor corrige los siguientes errores:</strong>
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="{{ form.medicamento.id_for_label }}" class="form-label">Medicamento *</label>
+                            {{ form.medicamento }}
+                            {% if form.medicamento.help_text %}
+                            <div class="form-text">{{ form.medicamento.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.dosis.id_for_label }}" class="form-label">Dosis *</label>
+                            {{ form.dosis }}
+                            {% if form.dosis.help_text %}
+                            <div class="form-text">{{ form.dosis.help_text }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.frecuencia.id_for_label }}" class="form-label">Frecuencia *</label>
+                            {{ form.frecuencia }}
+                            {% if form.frecuencia.help_text %}
+                            <div class="form-text">{{ form.frecuencia.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="{{ form.duracion.id_for_label }}" class="form-label">Duración *</label>
+                            {{ form.duracion }}
+                            {% if form.duracion.help_text %}
+                            <div class="form-text">{{ form.duracion.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Crear Receta
+                            </button>
+                            <a href="{% url 'tratamientos-list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">Información del Tratamiento</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>Paciente:</strong><br>
+                {{ tratamiento.consulta.paciente.nombre }} {{ tratamiento.consulta.paciente.apellido }}</p>
+                
+                <p><strong>Médico:</strong><br>
+                Dr. {{ tratamiento.consulta.medico.nombre }} {{ tratamiento.consulta.medico.apellido }}</p>
+                
+                <p><strong>Descripción:</strong><br>
+                {{ tratamiento.descripcion }}</p>
+                
+                <p><strong>Duración:</strong><br>
+                {{ tratamiento.duracion_dias }} días</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

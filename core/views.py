@@ -27,7 +27,7 @@ from .serializers import (
     RecetaMedicaSerializer, HistorialMedicoSerializer
 )
 from .filters import PacienteFilter, MedicoFilter, ConsultaMedicaFilter
-from .forms import PacienteForm, MedicoForm, EspecialidadForm, ConsultaMedicaForm, MedicamentoForm
+from .forms import PacienteForm, MedicoForm, EspecialidadForm, ConsultaMedicaForm, MedicamentoForm, MedicamentoForm, TratamientoForm, RecetaMedicaForm 
 
 
 # =============================================================================
@@ -529,4 +529,78 @@ def recetas_list(request):
         'query': query,
         'paciente_id': paciente_id,
         'medicamento_id': medicamento_id
+    })
+# =============================================================================
+# VISTAS PARA CREAR CONSULTAS, TRATAMIENTOS Y RECETAS
+# =============================================================================
+
+@login_required
+@permission_required('core.add_consultamedica', raise_exception=True)
+def consulta_create(request):
+    """
+    VISTA: Crear nueva consulta médica
+    PROPÓSITO: Formulario para registrar nuevas consultas
+    TEMPLATE: core/panel/consulta-form.html
+    """
+    if request.method == 'POST':
+        form = ConsultaMedicaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Consulta médica creada exitosamente')
+            return redirect('consultas-list')
+        else:
+            messages.error(request, 'Por favor corrige los errores en el formulario')
+    else:
+        form = ConsultaMedicaForm()
+    
+    return render(request, 'core/panel/consulta-form.html', {'form': form})
+
+@login_required
+@permission_required('core.add_tratamiento', raise_exception=True)
+def tratamiento_create(request):
+    """
+    VISTA: Crear nuevo tratamiento
+    PROPÓSITO: Formulario para crear tratamientos desde una consulta
+    TEMPLATE: core/panel/tratamiento-form.html
+    """
+    if request.method == 'POST':
+        form = TratamientoForm(request.POST)
+        if form.is_valid():
+            tratamiento = form.save()
+            messages.success(request, 'Tratamiento creado exitosamente')
+            # Redirigir a crear receta para este tratamiento
+            return redirect('receta-create', tratamiento_id=tratamiento.id)
+        else:
+            messages.error(request, 'Por favor corrige los errores en el formulario')
+    else:
+        form = TratamientoForm()
+    
+    return render(request, 'core/panel/tratamiento-form.html', {'form': form})
+
+@login_required
+@permission_required('core.add_recetamedica', raise_exception=True)
+def receta_create(request, tratamiento_id):
+    """
+    VISTA: Crear receta para un tratamiento
+    PROPÓSITO: Formulario para agregar medicamentos a un tratamiento
+    TEMPLATE: core/panel/receta-form.html
+    """
+    tratamiento = get_object_or_404(Tratamiento, id=tratamiento_id)
+    
+    if request.method == 'POST':
+        form = RecetaMedicaForm(request.POST)
+        if form.is_valid():
+            receta = form.save(commit=False)
+            receta.tratamiento = tratamiento
+            receta.save()
+            messages.success(request, 'Receta médica creada exitosamente')
+            return redirect('tratamientos-list')
+        else:
+            messages.error(request, 'Por favor corrige los errores en el formulario')
+    else:
+        form = RecetaMedicaForm(initial={'tratamiento': tratamiento})
+    
+    return render(request, 'core/panel/receta-form.html', {
+        'form': form,
+        'tratamiento': tratamiento
     })
