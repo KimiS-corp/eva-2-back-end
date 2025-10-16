@@ -432,3 +432,101 @@ def documentacion_api(request):
     TEMPLATE: core/panel/documentacion.html
     """
     return render(request, 'core/panel/documentacion.html')
+
+# =============================================================================
+# VISTAS PARA TRATAMIENTOS (AGREGAR AL FINAL)
+# =============================================================================
+
+@login_required
+@permission_required('core.view_tratamiento', raise_exception=True)
+def tratamientos_list(request):
+    """
+    VISTA: Lista de tratamientos médicos
+    PROPÓSITO: Mostrar todos los tratamientos con sus consultas
+    TEMPLATE: core/panel/tratamientos-list.html
+    """
+    tratamientos_list = Tratamiento.objects.select_related(
+        'consulta', 'consulta__paciente', 'consulta__medico'
+    ).all().order_by('-fecha_inicio')
+    
+    # Búsqueda
+    query = request.GET.get('q')
+    if query:
+        tratamientos_list = tratamientos_list.filter(
+            Q(descripcion__icontains=query) |
+            Q(consulta__paciente__nombre__icontains=query) |
+            Q(consulta__paciente__apellido__icontains=query) |
+            Q(observaciones__icontains=query)
+        )
+    
+    # Filtro por paciente
+    paciente_id = request.GET.get('paciente')
+    if paciente_id:
+        tratamientos_list = tratamientos_list.filter(consulta__paciente_id=paciente_id)
+    
+    # Paginación
+    paginator = Paginator(tratamientos_list, 10)
+    page_number = request.GET.get('page')
+    tratamientos = paginator.get_page(page_number)
+    
+    pacientes = Paciente.objects.all()
+    
+    return render(request, 'core/panel/tratamientos-list.html', {
+        'tratamientos': tratamientos,
+        'pacientes': pacientes,
+        'query': query,
+        'paciente_id': paciente_id
+    })
+
+# =============================================================================
+# VISTAS PARA RECETAS MÉDICAS
+# =============================================================================
+
+@login_required
+@permission_required('core.view_recetamedica', raise_exception=True)
+def recetas_list(request):
+    """
+    VISTA: Lista de recetas médicas
+    PROPÓSITO: Mostrar todas las recetas con tratamientos y medicamentos
+    TEMPLATE: core/panel/recetas-list.html
+    """
+    recetas_list = RecetaMedica.objects.select_related(
+        'tratamiento', 'tratamiento__consulta', 'tratamiento__consulta__paciente', 'medicamento'
+    ).all().order_by('-fecha_prescripcion')
+    
+    # Búsqueda
+    query = request.GET.get('q')
+    if query:
+        recetas_list = recetas_list.filter(
+            Q(medicamento__nombre__icontains=query) |
+            Q(tratamiento__consulta__paciente__nombre__icontains=query) |
+            Q(tratamiento__consulta__paciente__apellido__icontains=query) |
+            Q(dosis__icontains=query)
+        )
+    
+    # Filtro por paciente
+    paciente_id = request.GET.get('paciente')
+    if paciente_id:
+        recetas_list = recetas_list.filter(tratamiento__consulta__paciente_id=paciente_id)
+    
+    # Filtro por medicamento
+    medicamento_id = request.GET.get('medicamento')
+    if medicamento_id:
+        recetas_list = recetas_list.filter(medicamento_id=medicamento_id)
+    
+    # Paginación
+    paginator = Paginator(recetas_list, 10)
+    page_number = request.GET.get('page')
+    recetas = paginator.get_page(page_number)
+    
+    pacientes = Paciente.objects.all()
+    medicamentos = Medicamento.objects.all()
+    
+    return render(request, 'core/panel/recetas-list.html', {
+        'recetas': recetas,
+        'pacientes': pacientes,
+        'medicamentos': medicamentos,
+        'query': query,
+        'paciente_id': paciente_id,
+        'medicamento_id': medicamento_id
+    })

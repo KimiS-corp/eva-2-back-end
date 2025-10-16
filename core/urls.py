@@ -70,6 +70,23 @@ panel_patterns = [
     path('consultas/', views.consultas_list, name='consultas-list'),
     path('medicamentos/', views.medicamentos_list, name='medicamentos-list'),
     path('documentacion/', views.documentacion_api, name='documentacion-api')
+]# URLs para el panel personalizado
+panel_patterns = [
+    path('', views.dashboard, name='dashboard'),
+    path('pacientes/', views.pacientes_list, name='pacientes-list'),
+    path('pacientes/nuevo/', views.paciente_create, name='paciente-create'),
+    path('pacientes/<int:pk>/editar/', views.paciente_edit, name='paciente-edit'),
+    path('pacientes/<int:pk>/eliminar/', views.paciente_delete, name='paciente-delete'),
+    path('medicos/', views.medicos_list, name='medicos-list'),
+    path('medicos/nuevo/', views.medico_create, name='medico-create'),
+    path('medicos/<int:pk>/editar/', views.medico_edit, name='medico-edit'),
+    path('medicos/<int:pk>/eliminar/', views.medico_delete, name='medico-delete'),
+    path('especialidades/', views.especialidades_list, name='especialidades-list'),
+    path('consultas/', views.consultas_list, name='consultas-list'),
+    path('medicamentos/', views.medicamentos_list, name='medicamentos-list'),
+    path('documentacion/', views.documentacion_api, name='documentacion-api'),
+    path('tratamientos/', views.tratamientos_list, name='tratamientos-list'),
+    path('recetas/', views.recetas_list, name='recetas-list')
 ]
 
 urlpatterns = [

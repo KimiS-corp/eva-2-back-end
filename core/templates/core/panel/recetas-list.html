@@ -1,0 +1,148 @@
+{% extends 'core/panel/base.html' %}
+
+{% block title %}Recetas Médicas - Salud Vital{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Recetas Médicas</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'dashboard' %}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Filtros y Búsqueda -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Filtros de Búsqueda</h6>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="q" class="form-control" placeholder="Buscar por medicamento, paciente..." value="{{ query }}">
+            </div>
+            <div class="col-md-3">
+                <select name="paciente" class="form-control">
+                    <option value="">Todos los pacientes</option>
+                    {% for paciente in pacientes %}
+                    <option value="{{ paciente.id }}" {% if paciente_id == paciente.id|stringformat:"i" %}selected{% endif %}>
+                        {{ paciente.nombre }} {{ paciente.apellido }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="medicamento" class="form-control">
+                    <option value="">Todos los medicamentos</option>
+                    {% for medicamento in medicamentos %}
+                    <option value="{{ medicamento.id }}" {% if medicamento_id == medicamento.id|stringformat:"i" %}selected{% endif %}>
+                        {{ medicamento.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista de Recetas -->
+<div class="card shadow">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Lista de Recetas Médicas</h6>
+        <span class="badge bg-primary">{{ recetas.paginator.count }} recetas</span>
+    </div>
+    <div class="card-body">
+        {% if recetas %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Medicamento</th>
+                        <th>Dosis</th>
+                        <th>Frecuencia</th>
+                        <th>Duración</th>
+                        <th>Fecha Prescripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for receta in recetas %}
+                    <tr>
+                        <td>
+                            <strong>{{ receta.tratamiento.consulta.paciente.nombre }} {{ receta.tratamiento.consulta.paciente.apellido }}</strong>
+                            <br><small class="text-muted">{{ receta.tratamiento.consulta.paciente.rut }}</small>
+                        </td>
+                        <td>
+                            <strong>{{ receta.medicamento.nombre }}</strong>
+                            <br><small class="text-muted">{{ receta.medicamento.laboratorio }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ receta.dosis }}</span>
+                        </td>
+                        <td>{{ receta.frecuencia }}</td>
+                        <td>{{ receta.duracion }}</td>
+                        <td>{{ receta.fecha_prescripcion|date:"d/m/Y" }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" title="Ver detalles">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-info" title="Ver tratamiento">
+                                    <i class="fas fa-file-medical"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        {% if recetas.has_other_pages %}
+        <nav aria-label="Paginación de recetas">
+            <ul class="pagination justify-content-center">
+                {% if recetas.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ recetas.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if paciente_id %}&paciente={{ paciente_id }}{% endif %}{% if medicamento_id %}&medicamento={{ medicamento_id }}{% endif %}">Anterior</a>
+                </li>
+                {% endif %}
+
+                {% for num in recetas.paginator.page_range %}
+                {% if recetas.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if paciente_id %}&paciente={{ paciente_id }}{% endif %}{% if medicamento_id %}&medicamento={{ medicamento_id }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if recetas.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ recetas.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if paciente_id %}&paciente={{ paciente_id }}{% endif %}{% if medicamento_id %}&medicamento={{ medicamento_id }}{% endif %}">Siguiente</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-prescription fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No se encontraron recetas</h5>
+            <p class="text-muted">No hay recetas médicas registradas en el sistema.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
